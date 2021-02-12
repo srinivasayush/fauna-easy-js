@@ -1,15 +1,28 @@
-import { model } from "./model"
-import * as yup from 'yup'
+import faunadb, { query as q } from 'faunadb'
+import { BaseModel } from './model'
 
-const main = () => {
-    const Post = model('posts', yup.object().shape({}))
-    interface NewPost {
-        content: string
-    }
-    const post = new Post<NewPost>({
-        content: 'my post content'
-    })
-    post.save()
-
+interface ForestClientArgs {
+    client: faunadb.Client
 }
-main()
+
+export class ForestClient {
+    clientArgs: ForestClientArgs
+    constructor(clientArgs: ForestClientArgs) {
+        this.clientArgs = clientArgs
+    }
+
+    async create<T>(baseModel: typeof BaseModel, doc: T) {
+        try {
+            const data = await baseModel.schema.validate(doc)
+            await this.clientArgs.client.query(
+                q.Create(
+                    q.Collection(baseModel.collection),
+                    { data },
+                )
+            )
+        }
+        catch (error) {
+            throw error
+        }
+    }
+}
