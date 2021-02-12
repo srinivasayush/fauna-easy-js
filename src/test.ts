@@ -1,7 +1,11 @@
 import * as yup from 'yup'
 import * as forest from './index'
 import faunadb from 'faunadb'
-import { BaseModel } from './model'
+import { BaseModel } from './models/baseModel'
+
+
+import util from 'util'
+import { create } from 'yup/lib/Reference'
 
 class Post extends BaseModel {
     static collection = 'posts'
@@ -22,10 +26,20 @@ const main = async () => {
         client: faunaClient,
     })
 
-    await forestClient.create<NewPost>(Post, {
-        content: 'my new post'
-    }).catch(console.log)
+    const createdDocument = await forestClient.create<NewPost>(Post, {
+        content: 'my ohoho post'
+    })
     console.log('document created')
+    console.log(createdDocument.data)
+
+    const foundDocument = await forestClient.findById<NewPost>(Post, (createdDocument as any).ref.id)
+    console.log('Found document')
+    console.log(foundDocument.data)
+
+    const deletedDocument = await forestClient.delete(Post, (createdDocument as any).ref.id)
+    console.log('deleted document: ')
+    console.log(deletedDocument.data)
+
     
 }
 main()
