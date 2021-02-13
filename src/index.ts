@@ -1,20 +1,24 @@
 import faunadb, { query as q } from 'faunadb'
 import { BaseModel } from './models/baseModel'
-import { FaunaResponse } from './models/faunaResponse'
+import { FaunaDocumentResponse } from './models/faunaResponse'
 
-interface ForestClientArgs {
+type ForestClientArgs = {
     client: faunadb.Client
 }
 
+type QueryIndexOptions = {
+    getData: boolean
+}
+
 export class ForestClient {
-    clientArgs: ForestClientArgs
+    private clientArgs: ForestClientArgs
     constructor(clientArgs: ForestClientArgs) {
         this.clientArgs = clientArgs
     }
 
-    async create<T>(baseModel: typeof BaseModel, doc: T): Promise<FaunaResponse<T>> {
+    async create<T>(baseModel: BaseModel, doc: T): Promise<FaunaDocumentResponse<T>> {
         const data = await baseModel.schema.validate(doc)
-        const rawFaunaResponse: FaunaResponse<T> = await this.clientArgs.client.query(
+        const rawFaunaResponse: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
             q.Create(
                 q.Collection(baseModel.collection),
                 { data },
@@ -23,8 +27,8 @@ export class ForestClient {
         return rawFaunaResponse
     }
 
-    async delete<T>(baseModel: typeof BaseModel, id: string): Promise<FaunaResponse<T>> {
-        const deletedDocument: FaunaResponse<T> = await this.clientArgs.client.query(
+    async delete<T>(baseModel: BaseModel, id: string): Promise<FaunaDocumentResponse<T>> {
+        const deletedDocument: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
             q.Delete(
                 q.Ref(
                     q.Collection(baseModel.collection),
@@ -35,10 +39,29 @@ export class ForestClient {
 
         return deletedDocument
     }
+
+    async queryByIndex<T>(index: string, terms: any[], opts?: QueryIndexOptions): Promise<FaunaDocumentResponse<T>[] | [{ ref: any }]> {
+        let faunaQuery = q.Paginate(
+            q.Match(
+                q.Index(index),
+                terms.length > 1 ? terms : terms[0]
+            )
+        )
+        if (opts) {
+            if (opts.getData) {
+                faunaQuery = q.Map(
+                    faunaQuery,
+                    q.Lambda('X', q.Get(q.Var('X')))
+                )
+            }
+        }
+        const documents = await this.clientArgs.client.query(faunaQuery)
+        return documents as any
+    }
     
-    async findById<T>(baseModel: typeof BaseModel, id: string): Promise<FaunaResponse<T>> {
+    async findById<T>(baseModel: BaseModel, id: string): Promise<FaunaDocumentResponse<T>> {
         
-        const document: FaunaResponse<T> = await this.clientArgs.client.query(
+        const document: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
             q.Get(
                 q.Ref(
                     q.Collection(baseModel.collection),

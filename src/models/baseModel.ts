@@ -1,8 +1,12 @@
 import * as yup from 'yup'
 
 class BaseModel {
-    static collection: string
-    static schema: yup.ObjectSchema<any>
+    collection: string
+    schema: yup.ObjectSchema<any>
+    constructor(collection: string, schema: yup.ObjectSchema<any>) {
+        this.collection = collection
+        this.schema = schema
+    }
 }
 
 export { BaseModel }

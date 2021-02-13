@@ -3,19 +3,13 @@ import * as forest from './index'
 import faunadb from 'faunadb'
 import { BaseModel } from './models/baseModel'
 
-
-import util from 'util'
-import { create } from 'yup/lib/Reference'
-
-class Post extends BaseModel {
-    static collection = 'posts'
-    static schema = yup.object().shape({
-        content: yup.string().required(),
-    })
-}
+const post = new BaseModel('posts', yup.object().shape({
+    content: yup.string().required()
+}))
 
 interface NewPost {
-    content: string
+    title: string
+    content: string,
 }
 
 const main = async () => {
@@ -26,19 +20,31 @@ const main = async () => {
         client: faunaClient,
     })
 
-    const createdDocument = await forestClient.create<NewPost>(Post, {
-        content: 'my ohoho post'
-    })
-    console.log('document created')
-    console.log(createdDocument.data)
+    try {
+        const createdDocument = await forestClient.create<NewPost>(post, {
+            title: 'this is my ohoho post title',
+            content: 'this is my ohoho post content'
+        })
+    
+        console.log('document created')
+        console.log(createdDocument.data)
+    
+        const foundDocument = await forestClient.findById<NewPost>(post, (createdDocument as any).ref.id)
+        console.log('Found document')
+        console.log(foundDocument.data)
+    
+        const deletedDocument = await forestClient.delete(post, (createdDocument as any).ref.id)
+        console.log('deleted document: ')
+        console.log(deletedDocument.data)
 
-    const foundDocument = await forestClient.findById<NewPost>(Post, (createdDocument as any).ref.id)
-    console.log('Found document')
-    console.log(foundDocument.data)
-
-    const deletedDocument = await forestClient.delete(Post, (createdDocument as any).ref.id)
-    console.log('deleted document: ')
-    console.log(deletedDocument.data)
+        const documentReferences = await forestClient.queryByIndex('posts_by_content', ['my first post content'], {
+            getData: true
+        })
+        console.log(documentReferences)
+    }
+    catch (error) {
+        console.log(error)
+    }
 
     
 }

@@ -1,4 +1,4 @@
-export interface FaunaResponse<T> {
+export type FaunaDocumentResponse<T> = {
     ref: any
     ts: number
     data: T
