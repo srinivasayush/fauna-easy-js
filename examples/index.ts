@@ -1,14 +1,13 @@
 import * as yup from 'yup'
-import * as forest from './index'
+import * as forest from 'fauna-forest'
 import faunadb from 'faunadb'
-import { BaseModel } from './models/baseModel'
 
 const postSchema = yup.object().shape({
     title: yup.string().required(),
     content: yup.string().required()
 })
 
-const post = new BaseModel('posts', postSchema)
+const post = new forest.BaseModel('posts', postSchema)
 
 
 interface NewPost {

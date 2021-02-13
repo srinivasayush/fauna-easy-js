@@ -10,7 +10,7 @@ type QueryIndexOptions = {
     getData: boolean
 }
 
-export class ForestClient {
+class ForestClient {
     private clientArgs: ForestClientArgs
     constructor(clientArgs: ForestClientArgs) {
         this.clientArgs = clientArgs
@@ -73,3 +73,5 @@ export class ForestClient {
         return document
     }
 }
+
+export { BaseModel, ForestClient, FaunaDocumentResponse }

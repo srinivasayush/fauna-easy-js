@@ -13,7 +13,7 @@ Also make sure to install the package [yup](https://www.npmjs.com/package/yup) f
 ## QuickStart
 
 ```typescript
-import forest from 'fauna-forest'
+import * as forest from 'fauna-forest'
 import * as yup from 'yup'
 
 const postSchema = yup.object().shape({
