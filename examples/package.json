@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fauna-forest": "^0.0.1",
+    "fauna-forest": "^0.0.3",
     "faunadb": "^4.0.3",
     "yup": "^0.32.8"
   }
