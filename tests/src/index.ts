@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import * as forest from 'fauna-forest'
+import * as forest from '../../fauna-forest'
 import faunadb from 'faunadb'
 
 const postSchema = yup.object().shape({
@@ -17,7 +17,7 @@ interface NewPost {
 
 const main = async () => {
     const faunaClient = new faunadb.Client({
-        secret: ''
+        secret: 'YOUR_CLIENT_SECRET'
     })
     const forestClient = new forest.ForestClient({
         client: faunaClient,
@@ -44,11 +44,18 @@ const main = async () => {
             getData: true
         })
         console.log(documentReferences)
+
+        const updatedDocument = await forestClient.update<NewPost>(post, {
+            title: 'updated title',
+            content: 'updated content'
+        }, '290384136264221185')
+
+        console.log(updatedDocument)
     }
     catch (error) {
         console.log(error)
     }
 
-    
+    return null
 }
 main()

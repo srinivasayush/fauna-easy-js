@@ -1,12 +1,12 @@
 import faunadb, { query as q } from 'faunadb'
 import { BaseModel } from './models/baseModel'
-import { FaunaDocumentResponse } from './models/faunaResponse'
+import { FaunaDocument } from './models/faunaDocument'
 
-type ForestClientArgs = {
+interface ForestClientArgs {
     client: faunadb.Client
 }
 
-type QueryIndexOptions = {
+interface QueryIndexOptions {
     getData: boolean
 }
 
@@ -16,19 +16,22 @@ class ForestClient {
         this.clientArgs = clientArgs
     }
 
-    async create<T>(baseModel: BaseModel, doc: T): Promise<FaunaDocumentResponse<T>> {
+    async create<T>(baseModel: BaseModel, doc: T, id?: string): Promise<FaunaDocument<T>> {
         const data = await baseModel.schema.validate(doc)
-        const rawFaunaResponse: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
+        const createdDocument: FaunaDocument<T> = await this.clientArgs.client.query(
             q.Create(
-                q.Collection(baseModel.collection),
+                id != null ? q.Ref(
+                    q.Collection(baseModel.collection),
+                    id,
+                ) : q.Collection(baseModel.collection),
                 { data },
             )
         )
-        return rawFaunaResponse
+        return createdDocument
     }
 
-    async delete<T>(baseModel: BaseModel, id: string): Promise<FaunaDocumentResponse<T>> {
-        const deletedDocument: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
+    async delete<T>(baseModel: BaseModel, id: string): Promise<FaunaDocument<T>> {
+        const deletedDocument: FaunaDocument<T> = await this.clientArgs.client.query(
             q.Delete(
                 q.Ref(
                     q.Collection(baseModel.collection),
@@ -40,7 +43,22 @@ class ForestClient {
         return deletedDocument
     }
 
-    async queryByIndex<T>(index: string, terms: any[], opts?: QueryIndexOptions): Promise<FaunaDocumentResponse<T>[] | [{ ref: any }]> {
+    async update<T>(baseModel: BaseModel, doc: T, id: string): Promise<FaunaDocument<T>> {
+        const data = await baseModel.schema.validate(doc)
+
+        const updatedDocument: FaunaDocument<T> = await this.clientArgs.client.query(
+            q.Update(
+                q.Ref(
+                    q.Collection(baseModel.collection),
+                    id,
+                ),
+                { data },
+            )
+        )
+        return updatedDocument
+    }
+
+    async queryByIndex<T>(index: string, terms: any[], opts?: QueryIndexOptions): Promise<FaunaDocument<T>[] | [{ ref: any }]> {
         let faunaQuery = q.Paginate(
             q.Match(
                 q.Index(index),
@@ -59,9 +77,9 @@ class ForestClient {
         return documents as any
     }
     
-    async findById<T>(baseModel: BaseModel, id: string): Promise<FaunaDocumentResponse<T>> {
+    async findById<T>(baseModel: BaseModel, id: string): Promise<FaunaDocument<T>> {
         
-        const document: FaunaDocumentResponse<T> = await this.clientArgs.client.query(
+        const document: FaunaDocument<T> = await this.clientArgs.client.query(
             q.Get(
                 q.Ref(
                     q.Collection(baseModel.collection),
@@ -74,4 +92,4 @@ class ForestClient {
     }
 }
 
-export { BaseModel, ForestClient, FaunaDocumentResponse }
+export { BaseModel, ForestClient, FaunaDocument }
