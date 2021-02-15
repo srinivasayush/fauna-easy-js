@@ -1,13 +1,12 @@
 import * as yup from 'yup'
-import * as forest from 'fauna-forest'
-import faunadb from 'faunadb'
+import * as faunaEasy from 'fauna-easy'
 
 const postSchema = yup.object().shape({
     title: yup.string().required(),
     content: yup.string().required()
 })
 
-const post = new forest.BaseModel('posts', postSchema)
+const Post = new faunaEasy.BaseModel('posts', postSchema)
 
 
 interface NewPost {
@@ -16,41 +15,38 @@ interface NewPost {
 }
 
 const main = async () => {
-    const faunaClient = new faunadb.Client({
-        secret: 'YOUR_CLIENT_SECRET'
-    })
-    const forestClient = new forest.ForestClient({
-        client: faunaClient,
+    faunaEasy.use({
+        faunaSecret: 'YOUR_CLIENT_SECRET',
     })
 
     try {
-        const createdDocument = await forestClient.create<NewPost>(post, {
-            title: 'this is my ohoho post title',
-            content: 'this is my ohoho post content'
+        const createdDocument = await Post.create<NewPost>({
+            title: 'this is my post title',
+            content: 'this is my post content'
         })
     
         console.log('document created')
         console.log(createdDocument.data)
     
-        const foundDocument = await forestClient.findById<NewPost>(post, (createdDocument as any).ref.id)
+        const foundDocument = await Post.findById<NewPost>(createdDocument.ref.id)
         console.log('Found document')
         console.log(foundDocument.data)
-    
-        const deletedDocument = await forestClient.delete(post, (createdDocument as any).ref.id)
-        console.log('deleted document: ')
-        console.log(deletedDocument.data)
 
-        const documentReferences = await forestClient.queryByIndex('posts_by_content', ['my first post content'], {
-            getData: true
-        })
-        console.log(documentReferences)
-
-        const updatedDocument = await forestClient.update<NewPost>(post, {
+        const updatedDocument = await Post.update<NewPost>({
             title: 'updated title',
             content: 'updated content'
-        }, '290384136264221185')
+        }, createdDocument.ref.id)
 
         console.log(updatedDocument)
+
+        const documents = await Post.queryByIndex('posts_by_content', ['this is my post content'], {
+            data: true
+        })
+        console.log(documents)
+    
+        const deletedDocument = await Post.delete(createdDocument.ref.id)
+        console.log('deleted document: ')
+        console.log(deletedDocument.data)
     }
     catch (error) {
         console.log(error)

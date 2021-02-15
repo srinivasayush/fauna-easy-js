@@ -1,18 +1,18 @@
 {
-  "name": "fauna-forest",
-  "version": "0.0.3",
-  "description": "",
+  "name": "fauna-easy",
+  "version": "0.0.1",
+  "description": "A convenient wrapper around faunadb-js that abstracts away FQL code for the database service faunadb.",
   "main": "lib/index.js",
   "types": "lib",
-  "homepage": "https://github.com/DudeBro249/fauna-forest-js",
+  "homepage": "https://github.com/DudeBro249/fauna-easy-js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsc -p . && node lib/test.js",
     "build": "npx tsc -p ."
   },
   "keywords": [
     "faunadb",
     "client",
+    "crud",
     "wrapper",
     "database",
     "fauna"
