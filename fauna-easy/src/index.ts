@@ -1,5 +1,5 @@
-import { BaseModel } from './models/baseModel'
-import { FaunaDocument } from './models/faunaDocument'
+import { BaseModel } from './baseModel'
+import { FaunaDocument } from './faunaDocument'
 import { FaunaForestStore } from './store'
 
 interface ForestClientArgs {

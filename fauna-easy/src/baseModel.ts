@@ -1,7 +1,7 @@
 import faunadb, { query as q } from 'faunadb'
 import * as yup from 'yup'
-import { FaunaDocument } from '..'
-import { FaunaForestStore } from '../store'
+import { FaunaDocument } from '.'
+import { FaunaForestStore } from './store'
 
 class BaseModel {
     collection: string
