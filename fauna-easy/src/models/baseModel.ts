@@ -65,7 +65,7 @@ class BaseModel {
         return updatedDocument
     }
 
-    async queryByIndex<T>(index: string, terms: any[], opts?: { data: boolean }): Promise<FaunaDocument<T>[] | [{ ref: any }]> {
+    async queryByIndex<T>(index: string, terms: any[], opts?: { data: boolean }): Promise<FaunaDocument<T>[] | { data: [{ ref: any }] }> {
         const faunaClient = this.getFaunaClient()
         let faunaQuery = q.Paginate(
             q.Match(

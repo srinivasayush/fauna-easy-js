@@ -8,10 +8,9 @@
     "dev": "npx tsc -p . && node lib/index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "DudeBro249",
+  "license": "Apache-2.0",
   "dependencies": {
-    "fauna-forest": "^0.0.3",
     "faunadb": "^4.0.3",
     "yup": "^0.32.8"
   }
