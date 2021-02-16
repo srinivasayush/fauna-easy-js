@@ -38,11 +38,6 @@ const main = async () => {
         }, createdDocument.ref.id)
 
         console.log(updatedDocument)
-
-        const documents = await Post.queryByIndex('posts_by_content', ['this is my post content'], {
-            data: true
-        })
-        console.log(documents)
     
         const deletedDocument = await Post.delete(createdDocument.ref.id)
         console.log('deleted document: ')
