@@ -1,5 +1,4 @@
 import { BaseModel } from './baseModel'
-import { FaunaDocument } from './faunaDocument'
 import { FaunaForestStore } from './store'
 
 interface ForestClientArgs {
@@ -12,4 +11,4 @@ const use = (clientArgs: ForestClientArgs) => {
     })
 }
 
-export { BaseModel, use, FaunaDocument }
+export { BaseModel, use}
