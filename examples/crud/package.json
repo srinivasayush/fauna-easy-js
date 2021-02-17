@@ -4,8 +4,9 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsc -p . && node lib/index.js"
+    "prod": "npm run build && node lib/index.js",
+    "dev": "npm run build && node -r dotenv/config lib/index.js",
+    "build": "npx tsc -p ."
   },
   "keywords": [],
   "author": "DudeBro249",
@@ -13,5 +14,8 @@
   "dependencies": {
     "faunadb": "^4.0.3",
     "yup": "^0.32.8"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.28"
   }
 }
