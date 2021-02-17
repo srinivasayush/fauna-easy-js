@@ -15,7 +15,8 @@
     "crud",
     "wrapper",
     "database",
-    "fauna"
+    "fauna",
+    "FQL"
   ],
   "author": "DudeBro249",
   "license": "Apache-2.0",
