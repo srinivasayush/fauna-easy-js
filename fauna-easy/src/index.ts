@@ -1,14 +1,6 @@
 import { BaseModel } from './baseModel'
-import { FaunaForestStore } from './store'
+import * as yup from 'yup'
 
-interface ForestClientArgs {
-    faunaSecret: string
-}
+const model = <T = any>(collection: string, schema: yup.ObjectSchema<any>) => new BaseModel<T>(collection, schema)
 
-const use = (clientArgs: ForestClientArgs) => {
-    new FaunaForestStore({
-        faunaSecret: clientArgs.faunaSecret
-    })
-}
-
-export { BaseModel, use}
+export { model }
