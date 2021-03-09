@@ -1,5 +1,4 @@
 import * as yup from 'yup'
-// import { model } from '../../../../fauna-easy/lib'
 import { model } from 'fauna-easy'
 
 const postSchema = yup.object().shape({

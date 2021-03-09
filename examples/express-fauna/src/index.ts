@@ -12,10 +12,16 @@ app.get('/posts/:id', async (req, res) => {
         secret: process.env.FAUNA_SECRET!
     })
 
-    const retrievedDocument = await faunaClient.query(
-        Post.findById(id),
-    )
-    res.status(200).json({ ...retrievedDocument })
+    try {
+        const retrievedDocument = await faunaClient.query(
+            Post.findById(id),
+        )
+        console.log(retrievedDocument)
+        res.status(200).json({ ...retrievedDocument })
+    }
+    catch(error) {
+        console.log(error)
+    }
 })
 
 app.post('/posts', async (req, res) => {
